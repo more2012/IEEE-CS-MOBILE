@@ -1,0 +1,85 @@
+ 1.if-else Condition 
+Used for conditional.  
+
+int num = 10;
+if (num > 0) {
+  print("Positive number");
+} else {
+  print("Non-positive number");
+}
+
+
+2. if-else if Condition
+ multiple conditions sequentially.  
+
+int num = 0;
+if (num > 0) {
+  print("Positive");
+} else if (num < 0) {
+  print("Negative");
+} else {
+  print("Zero");
+}
+
+
+ 3. switch-case  
+Alternative to multiple if-else for fixed values.  
+
+String grade = "A";
+switch (grade) {
+  case "A":
+    print("Excellent");
+    break;
+  case "B":
+    print("Good");
+    break;
+  default:
+    print("Invalid grade");
+}
+
+ 4. assert & ternary 
+- assert: Debugging tool to check conditions.  
+- Ternary Operator (condition ? trueCase : falseCase): قصيرة if-else.  
+
+int age = 20;
+assert(age >= 18, "Age must be 18 or above");
+String result = (age >= 18) ? "Adult" : "Minor";
+print(result);
+
+ 5. for Loop  
+Repeats code for a fixed number of times.  
+
+for (int i = 1; i <= 5; i++) {
+  print("Iteration $i");
+}
+-
+
+ 6. while Loop 
+Repeats while a condition is true.  
+
+int i = 1;
+while (i <= 5) {
+  print("Iteration $i");
+  i++;
+}
+
+ 7. do-while Loop  
+Executes at least once before checking the condition.  
+
+int i = 1;
+do {
+  print("Iteration $i");
+  i++;
+} while (i <= 5);
+
+
+8. break Condition 
+Exits a loop or switch case.  
+
+for (int i = 1; i <= 10; i++) {
+  if (i == 5) {
+    break; //  i = 5 وقف عندما 
+  }
+  print(i);
+}
+
