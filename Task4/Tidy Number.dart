@@ -1,3 +1,4 @@
+import 'dart:io';
 bool isTidyNumber(int n) {
   String numString= n.toString(); 
   for (int i=0; i < numString.length-1; i++) {
@@ -9,9 +10,7 @@ bool isTidyNumber(int n) {
 }
 
 void main() {
-  print(isTidyNumber(12));   
-  print(isTidyNumber(32));    
-  print(isTidyNumber(1024));  
-  print(isTidyNumber(13579)); 
-  print(isTidyNumber(2335));  
+  print("Enter a number:");
+  int n = int.parse(stdin.readLineSync()!); 
+  print(isTidyNumber(n)); 
 }
