@@ -1,20 +1,26 @@
+import 'dart:collection';
 import 'dart:io';
+
 int dblLinear(int n) {
-  Set<int> seen = Set<int>();
-  List<int> queue = [];
+  Queue<int> q2= Queue<int>();
+  Queue<int> q3= Queue<int>();
+  Set<int> seen= {1}; // Track unique values
+  int current=1;
 
-  queue.add(1);
-  seen.add(1);
-  int current = 0;
+  for (int i=0;i<n;i++) {
+    int next2=2*current+1;
+    int next3=3*current+1;
 
-  for (int i=0; i<=n; i++) {
-    current= queue.removeAt(0); 
-    int next1= 2*current +1;
-    int next2= 3*current +1;
-    if (seen.add(next1)) queue.add(next1);
-    if (seen.add(next2)) queue.add(next2);
-    queue.sort();
+    if (seen.add(next2)) q2.add(next2);
+    if (seen.add(next3)) q3.add(next3);
+
+    if (q2.isNotEmpty && (q3.isEmpty || q2.first < q3.first)) {
+      current= q2.removeFirst();
+    } else {
+      current= q3.removeFirst();
+    }
   }
+
   return current;
 }
 
