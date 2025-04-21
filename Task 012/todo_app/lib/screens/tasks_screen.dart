@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class TasksScreen extends StatefulWidget {
-  const TasksScreen({super.key});
+  const TasksScreen({super.key, required this.tasks});
+  final List<Map>tasks;
 
   @override
   State<TasksScreen> createState() => _TasksScreenState();
@@ -29,16 +30,17 @@ class _TasksScreenState extends State<TasksScreen> {
                     ),
                     title: Row(
                       children: [
-                        Text(
-                          "go to GYM",
-                          style: TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: Text(widget.tasks[index]['title'],
+                            style: const TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        const Spacer(),
+                        const SizedBox(width: 20,),
                         IconButton(
                           onPressed: () {},
                           icon: Icon(Icons.archive, color: Colors.white),
@@ -55,11 +57,11 @@ class _TasksScreenState extends State<TasksScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '5:53 PM',
+                            widget.tasks[index]['time'],
                             style: TextStyle(color: Colors.white, fontSize: 17),
                           ),
                           Text(
-                            'jul 24,2024',
+                            widget.tasks[index]['date'],
                             style: TextStyle(color: Colors.white, fontSize: 17),
                           ),
                         ],
@@ -67,7 +69,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     ),
                   ),
               separatorBuilder: (context, index) => Divider(),
-              itemCount: 5,
+              itemCount: widget.tasks.length,
             ),
           ),
         ],

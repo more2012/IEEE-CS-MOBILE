@@ -1,6 +1,7 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:todo_app/screens/add_tasks_screen.dart';
 import 'package:todo_app/screens/archiev_screen.dart';
 import 'package:todo_app/screens/done_screen.dart';
 import 'package:todo_app/screens/tasks_screen.dart';
@@ -13,18 +14,84 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-final _pageController = PageController(initialPage: 0);
-final NotchBottomBarController _controller = NotchBottomBarController(index: 0);
-final _scaffoldKey = GlobalKey<ScaffoldState>();
-var titleController = TextEditingController();
-var timeController = TextEditingController();
-var dateController = TextEditingController();
-var formKey = GlobalKey<FormState>();
-bool isBottomSheetShow = false;
-
-List<Widget> screens = const [TasksScreen(), ArchievScreen(), DoneScreen()];
+///create database
+///create table
+///open database
+///insert to database
+///get from database
+///update in database
+///delete from database
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _pageController = PageController(initialPage: 0);
+  final NotchBottomBarController _controller = NotchBottomBarController(
+    index: 0,
+  );
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var titleController = TextEditingController();
+  var timeController = TextEditingController();
+  var dateController = TextEditingController();
+  var formKey = GlobalKey<FormState>();
+  bool isBottomSheetShow = false;
+
+  List<Widget> get screens => [
+    TasksScreen(tasks: tasks),
+    const ArchievScreen(),
+    const DoneScreen(),
+  ];
+  late Database database;
+  List<Map> tasks = [];
+  void createDatabase() async {
+    // why async
+    database = await openDatabase(
+      'path.db',
+      version: 1,
+      onCreate: (database, version) async {
+        print("dataBase Created");
+        await database.execute(
+          'CREATE TABLE Tasks (id INTEGER PRIMARY KEY, title TEXT,time Text, date Text,status Text )',
+        );
+        print("table Created");
+      },
+      onOpen: (database) async {
+        await getDateFromDatabase(database).then((value) {
+          tasks = value;
+        });
+        ///////////////////////////////////
+      },
+    );
+  }
+
+  Future insertToDatebase({
+    required String title,
+    required String date,
+    required String time,
+    required String status,
+  }) async {
+    await database.transaction((txn) {
+      return txn
+          .rawInsert(
+            'INSERT INTO Tasks(title, time, date, status) VALUES("$title", "$date", "$time","$status")',
+          )
+          .then((value) {
+            getDateFromDatabase(database).then((value) {
+              tasks = value;
+            });
+          });
+    });
+  }
+
+  Future<List<Map>> getDateFromDatabase(database) async {
+    setState(() {});
+    return await database.rawQuery('SELECT * FROM Tasks');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    createDatabase();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,65 +121,30 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           if (isBottomSheetShow) {
             if (formKey.currentState!.validate()) {
-              Navigator.pop(context);
-              isBottomSheetShow = false;
+              await insertToDatebase(
+                title: titleController.text,
+                date: dateController.text,
+                time: timeController.text,
+                status: 'status',
+              ).then((value) {
+                setState(() {});
+                Navigator.pop(context);
+                isBottomSheetShow = false;
+              });
             }
           } else {
             _scaffoldKey.currentState!
-                .showBottomSheet((context) {
-                  return Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          defaultTextFormField(
-                            controller: titleController,
-                            labelText: "Task Name",
-                            icon: Icons.title,
-                            onTap: () {},
-                          ),
-                          const SizedBox(height: 10),
-                          defaultTextFormField(
-                            controller: timeController,
-                            labelText: "Task Time",
-                            icon: Icons.timer,
-                            onTap: () {
-                              showTimePicker(
-                                context: context,
-                                initialTime: TimeOfDay.now(),
-                              ).then((value) {
-                                timeController.text = value!.format(context);
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 10),
-                          defaultTextFormField(
-                            controller: dateController,
-                            labelText: "Task Date",
-                            icon: Icons.date_range,
-                            onTap: () {
-                              showDatePicker(
-                                context: context,
-                                firstDate: DateTime.now(),
-                                initialDate: DateTime.now(),
-                                lastDate: DateTime.parse('3999-05-09'),
-                              ).then((value) {
-                                dateController.text = DateFormat.yMMMd().format(
-                                  value!,
-                                );
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                })
+                .showBottomSheet(
+                  (context) => AddTasksScreen(
+                    formKey: formKey,
+                    titleController: titleController,
+                    timeController: timeController,
+                    dateController: dateController,
+                  ),
+                )
                 .closed
                 .then((value) {
                   isBottomSheetShow = false;
