@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
                 duration: Duration(milliseconds: 1000),
                 padding: EdgeInsets.all(20),
                 width: double.infinity,
-                height: isClicked == true ? 500 : 240,
+                height: isClicked == true ? 600 : 300,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: HexColor('#56636a'),
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    //const SizedBox(height: 5),
                     Expanded(
                       child: ListView.separated(
                         itemBuilder:
